@@ -35,3 +35,18 @@ class UserProfileSerializer(serializers.ModelSerializer):
             instance.set_password(password)
 
         return super().update(instance, validated_data)
+
+
+class ProfileFeedItemSerializer(serializers.ModelSerializer):
+    """Serializes profile feed item"""
+
+    class Meta:
+        model = models.ProfileFeedItem
+        fields = ('id', 'user_profile', 'status_text', 'created_on')
+        extra_kwargs = {
+            'user_profile': {
+            # This makes that the user_profile field is only readable. If it wasn't this would be a security breach
+            # and would allow us to update data of a user_profile from another.
+                'read_only': True
+            }
+        }
