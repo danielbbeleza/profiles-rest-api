@@ -6,7 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework import filters
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
 from profiles_api import serializers
 from profiles_api import models
@@ -75,9 +75,9 @@ class HelloViewSet(viewsets.ViewSet):
         """Create a new hello message"""
         serializer = self.serializer_class(data=request.data)
 
-        if(serializer.is_valid):
+        if serializer.is_valid:
             name = serializer.validated_data.get('name')
-            message = f'Hello {name}!'
+            message = f"Hello {name}!"
             return Response({'message': message})
         else:
             return Response(
@@ -123,10 +123,7 @@ class UserProfileFeedViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,) # this needs to be a tuple
     serializer_class = serializers.ProfileFeedItemSerializer
     queryset = models.ProfileFeedItem.objects.all()
-    permission_classes = (
-        permissions.UpdateOwnStatus,
-        IsAuthenticatedOrReadOnly
-    )
+    permission_classes = (permissions.UpdateOwnStatus, IsAuthenticated)
 
     def perform_create(self, serializer):
         """Sets the user profile to the logged user"""
